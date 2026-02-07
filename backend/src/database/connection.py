@@ -2,10 +2,6 @@ from sqlmodel import create_engine
 from sqlalchemy.orm import sessionmaker
 import os
 from urllib.parse import urlparse
-from dotenv import load_dotenv
-
-# Load environment variables from .env file
-load_dotenv()
 
 # Note: Do not use load_dotenv() in Vercel serverless functions
 # Environment variables are set directly in the Vercel dashboard

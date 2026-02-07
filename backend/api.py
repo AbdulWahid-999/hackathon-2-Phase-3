@@ -23,19 +23,25 @@ app = FastAPI(
 
 # Configure CORS for production
 allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001,https://hackathon-2-phase-3-navy.vercel.app")
-allowed_origins = [origin.strip() for origin in allowed_origins_env.split(",")]
+allowed_origins = [origin.strip() for origin in allowed_origins_env.split(",")] if allowed_origins_env else []
 
-# Add your frontend domain to allowed origins
-frontend_domain = "https://hackathon-2-phase-2-pink.vercel.app"
-if frontend_domain not in allowed_origins:
-    allowed_origins.append(frontend_domain)
+# Add your frontend domains to allowed origins
+frontend_domains = [
+    "https://hackathon-2-phase-3-navy.vercel.app",  # Your frontend domain
+    "https://hackathon-2-phase-2-pink.vercel.app"   # Another possible frontend domain
+]
+
+for domain in frontend_domains:
+    if domain not in allowed_origins:
+        allowed_origins.append(domain)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    allow_origin_regex=r"https://.*\.vercel\.app$"  # Allow any vercel.app domain
 )
 
 # Import and include API routers

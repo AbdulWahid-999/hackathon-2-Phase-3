@@ -73,7 +73,9 @@ class AuthClient {
   private baseUrl: string;
 
   private constructor() {
-    this.baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+    // Ensure baseUrl doesn't end with a slash to prevent double slashes in URLs
+    const envBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+    this.baseUrl = envBaseUrl.endsWith('/') ? envBaseUrl.slice(0, -1) : envBaseUrl;
   }
 
   public static getInstance(): AuthClient {

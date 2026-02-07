@@ -1,7 +1,8 @@
 import axios, { AxiosResponse } from 'axios';
 
 // Base API URL - use environment variable or default to localhost
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+const envBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+const API_BASE_URL = envBaseUrl.endsWith('/') ? envBaseUrl.slice(0, -1) : envBaseUrl;
 
 // Create axios instance with default configuration
 const apiClient = axios.create({

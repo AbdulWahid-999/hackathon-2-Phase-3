@@ -11,10 +11,23 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Configure CORS
+# Configure CORS for production
+allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001")
+allowed_origins = [origin.strip() for origin in allowed_origins_env.split(",")] if allowed_origins_env else []
+
+# Add your frontend domains to allowed origins
+frontend_domains = [
+    "https://hackathon-2-phase-3-navy.vercel.app",
+    "https://your-frontend-domain.vercel.app"
+]
+
+for domain in frontend_domains:
+    if domain not in allowed_origins:
+        allowed_origins.append(domain)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure based on your frontend URL in production
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
