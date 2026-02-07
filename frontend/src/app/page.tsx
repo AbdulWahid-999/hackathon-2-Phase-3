@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/Button';
-import { PersistentChatNavbar } from '@/components/Navbar/PersistentChatNavbar';
 
 export default function Home() {
   return (
@@ -128,9 +127,6 @@ export default function Home() {
           </div>
         </footer>
       </div>
-
-      {/* Persistent Chat Interface */}
-      <PersistentChatNavbar />
     </div>
   );
 }
