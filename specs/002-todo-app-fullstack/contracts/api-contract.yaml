@@ -1,0 +1,389 @@
+openapi: 3.0.3
+info:
+  title: Todo Web Application API
+  description: API for the Full-Stack Secure Todo Web Application
+  version: 1.0.0
+servers:
+  - url: https://api.todoapp.example.com/v1
+    description: Production server
+  - url: http://localhost:8000/v1
+    description: Development server
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      description: Creates a new user account with email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: User's email address
+                password:
+                  type: string
+                  minLength: 8
+                  description: User's password
+                confirmPassword:
+                  type: string
+                  minLength: 8
+                  description: Confirmation of the password
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Registration successful"
+        '400':
+          description: Invalid input or user already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Invalid email format or password too weak"
+
+  /auth/login:
+    post:
+      summary: Login user
+      description: Authenticates user and returns JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: User's email address
+                password:
+                  type: string
+                  description: User's password
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - access_token
+                  - token_type
+                properties:
+                  access_token:
+                    type: string
+                    description: JWT access token
+                  token_type:
+                    type: string
+                    example: "bearer"
+                  refresh_token:
+                    type: string
+                    description: Optional refresh token
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Invalid email or password"
+
+  /todos:
+    get:
+      summary: Get user's todos
+      description: Retrieve all todos for the authenticated user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of user's todos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  todos:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Todo'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    post:
+      summary: Create a new todo
+      description: Create a new todo item for the authenticated user
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTodoRequest'
+      responses:
+        '201':
+          description: Todo created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Title is required"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /todos/{id}:
+    get:
+      summary: Get a specific todo
+      description: Retrieve a specific todo by ID for the authenticated user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Todo ID
+      responses:
+        '200':
+          description: Todo details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Todo not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Todo not found"
+
+    put:
+      summary: Update a todo
+      description: Update an existing todo for the authenticated user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Todo ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTodoRequest'
+      responses:
+        '200':
+          description: Todo updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Title is required"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Todo not found
+
+    delete:
+      summary: Delete a todo
+      description: Delete a specific todo for the authenticated user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Todo ID
+      responses:
+        '200':
+          description: Todo deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Todo deleted successfully"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Todo not found
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Todo:
+      type: object
+      required:
+        - id
+        - title
+        - is_completed
+        - created_at
+        - user_id
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the todo
+        title:
+          type: string
+          maxLength: 255
+          description: Title of the todo item
+        description:
+          type: string
+          maxLength: 1000
+          description: Detailed description of the todo
+        is_completed:
+          type: boolean
+          description: Completion status of the todo
+        due_date:
+          type: string
+          format: date-time
+          description: Deadline for the todo
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when todo was created
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp when todo was last updated
+        user_id:
+          type: string
+          format: uuid
+          description: Reference to the owner user
+
+    CreateTodoRequest:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          maxLength: 255
+          description: Title of the todo item
+        description:
+          type: string
+          maxLength: 1000
+          description: Detailed description of the todo
+        due_date:
+          type: string
+          format: date-time
+          description: Deadline for the todo
+
+    UpdateTodoRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 255
+          description: Title of the todo item
+        description:
+          type: string
+          maxLength: 1000
+          description: Detailed description of the todo
+        is_completed:
+          type: boolean
+          description: Completion status of the todo
+        due_date:
+          type: string
+          format: date-time
+          description: Deadline for the todo
+
+  responses:
+    UnauthorizedError:
+      description: Unauthorized - Invalid or missing JWT token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Not authenticated"

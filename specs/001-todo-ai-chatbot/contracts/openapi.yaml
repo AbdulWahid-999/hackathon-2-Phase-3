@@ -1,0 +1,333 @@
+openapi: 3.0.3
+info:
+  title: Todo AI Chatbot API
+  description: API for natural language interaction with the Todo application
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Development server
+  - url: https://your-deployment-url.vercel.app
+    description: Production server
+
+paths:
+  /chat/send:
+    post:
+      summary: Send a chat message to the AI chatbot
+      description: Processes natural language input and performs todo operations
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatMessageRequest'
+      responses:
+        '200':
+          description: Chat response with operation results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessageResponse'
+        '400':
+          description: Invalid request or unrecognized command
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing authentication token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /chat/history:
+    get:
+      summary: Get chat history for the current user
+      description: Retrieves conversation history for the authenticated user
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of chat messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChatMessageHistory'
+        '401':
+          description: Unauthorized - invalid or missing authentication token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /chat/intent-resolution:
+    post:
+      summary: Resolve intent from natural language
+      description: Parses natural language and returns the intended operation without executing it
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NaturalLanguageRequest'
+      responses:
+        '200':
+          description: Intent and parameters identified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntentResolutionResponse'
+        '400':
+          description: Unable to identify intent from input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing authentication token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ChatMessageRequest:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: The natural language message from the user
+          example: "Add a new todo called 'Buy groceries'"
+        session_id:
+          type: string
+          format: uuid
+          description: Optional session identifier to group related interactions
+          example: "550e8400-e29b-41d4-a716-446655440000"
+
+    ChatMessageResponse:
+      type: object
+      required:
+        - message
+        - intent
+        - operation_result
+      properties:
+        message:
+          type: string
+          description: The response message to display to the user
+          example: "Successfully added 'Buy groceries' to your todos"
+        intent:
+          type: string
+          description: The identified intent from the user message
+          enum: [ADD_TODO, LIST_TODOS, COMPLETE_TODO, DELETE_TODO, UPDATE_TODO, UNKNOWN]
+        operation_result:
+          $ref: '#/components/schemas/OperationResult'
+        chat_interaction_id:
+          type: string
+          format: uuid
+          description: Unique identifier for this chat interaction
+          example: "550e8400-e29b-41d4-a716-446655440001"
+
+    NaturalLanguageRequest:
+      type: object
+      required:
+        - input
+      properties:
+        input:
+          type: string
+          description: The natural language input to analyze
+          example: "Show me my todos"
+
+    IntentResolutionResponse:
+      type: object
+      required:
+        - intent
+        - confidence
+        - parameters
+      properties:
+        intent:
+          type: string
+          description: The identified intent
+          enum: [ADD_TODO, LIST_TODOS, COMPLETE_TODO, DELETE_TODO, UPDATE_TODO, UNKNOWN]
+        confidence:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+          description: Confidence score for the identified intent
+          example: 0.95
+        parameters:
+          type: object
+          description: Parameters extracted from the input
+          example:
+            todo_title: "Buy groceries"
+            action_target: "Buy groceries"
+
+    ChatMessageHistory:
+      type: object
+      required:
+        - id
+        - user_input
+        - bot_response
+        - timestamp
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the chat interaction
+          example: "550e8400-e29b-41d4-a716-446655440001"
+        user_input:
+          type: string
+          description: The original user input
+          example: "Add a new todo called 'Buy groceries'"
+        bot_response:
+          type: string
+          description: The bot's response
+          example: "Successfully added 'Buy groceries' to your todos"
+        intent:
+          type: string
+          description: The identified intent
+          enum: [ADD_TODO, LIST_TODOS, COMPLETE_TODO, DELETE_TODO, UPDATE_TODO, UNKNOWN]
+        timestamp:
+          type: string
+          format: date-time
+          description: When the interaction occurred
+          example: "2023-10-20T10:30:00Z"
+        session_id:
+          type: string
+          format: uuid
+          description: Session identifier for the interaction
+          example: "550e8400-e29b-41d4-a716-446655440000"
+
+    OperationResult:
+      type: object
+      required:
+        - success
+        - action_performed
+      properties:
+        success:
+          type: boolean
+          description: Whether the operation was successful
+          example: true
+        action_performed:
+          type: string
+          description: Description of the action that was performed
+          example: "Added todo item"
+        affected_items:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                description: ID of the affected todo
+                example: "550e8400-e29b-41d4-a716-446655440002"
+              title:
+                type: string
+                description: Title of the affected todo
+                example: "Buy groceries"
+          description: List of items affected by the operation
+        new_state:
+          $ref: '#/components/schemas/Todo'
+
+    Todo:
+      type: object
+      required:
+        - id
+        - title
+        - is_completed
+        - user_id
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the todo
+          example: "550e8400-e29b-41d4-a716-446655440002"
+        title:
+          type: string
+          description: Title of the todo
+          example: "Buy groceries"
+        description:
+          type: string
+          description: Optional description of the todo
+          example: "Get milk, bread, and eggs"
+        is_completed:
+          type: boolean
+          description: Completion status of the todo
+          example: false
+        user_id:
+          type: string
+          format: uuid
+          description: ID of the user who owns this todo
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        created_at:
+          type: string
+          format: date-time
+          description: When the todo was created
+          example: "2023-10-20T10:00:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: When the todo was last updated
+          example: "2023-10-20T10:30:00Z"
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Error code
+          example: "INVALID_COMMAND"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Unable to understand your command. Try saying something like 'Add a new todo called Buy groceries'"
+        details:
+          type: object
+          description: Additional error details
+          example:
+            suggestion: "Try specifying a clear action like add, complete, or delete"
+
+tags:
+  - name: chat
+    description: Chatbot interaction endpoints
+  - name: intents
+    description: Intent resolution endpoints
+  - name: history
+    description: Chat history endpoints
