@@ -106,35 +106,35 @@ export default function ChatbotPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
-        <div className="mb-8 text-center bg-gradient-to-br from-purple-900/30 to-pink-900/30 backdrop-blur-sm p-8 rounded-2xl border border-purple-500/30 shadow-2xl">
-          <h1 className="text-3xl font-bold text-gray-200 mb-4">
+        <div className="mb-6 text-center bg-gradient-to-br from-purple-900/30 to-pink-900/30 backdrop-blur-sm p-6 rounded-2xl border border-purple-500/30 shadow-2xl md:mb-8 md:p-8">
+          <h1 className="text-2xl font-bold text-gray-200 mb-2 md:text-3xl md:mb-4">
             AI Todo Assistant
           </h1>
-          <p className="text-gray-300 mt-2 text-lg">Manage your tasks with natural language commands</p>
+          <p className="text-gray-300 text-sm md:text-lg">Manage your tasks with natural language commands</p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden flex flex-col h-[70vh]">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden flex flex-col h-[60vh] md:h-[70vh]">
           {/* Chat Header */}
-          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-4">
+          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-3 md:p-4">
             <div className="flex items-center">
-              <div className="bg-white/20 p-2 rounded-full mr-3">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="bg-white/20 p-2 rounded-full mr-2 md:mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                 </svg>
               </div>
               <div>
-                <h2 className="font-semibold">AI Todo Assistant</h2>
-                <p className="text-xs opacity-80">Ready to help manage your todos</p>
+                <h2 className="font-semibold text-sm md:text-base">AI Todo Assistant</h2>
+                <p className="text-xs opacity-80 md:text-sm">Ready to help manage your todos</p>
               </div>
             </div>
           </div>
 
           {/* Messages Container */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-50/50 to-gray-100/50 dark:from-gray-900/50 dark:to-gray-800/50 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto p-3 space-y-3 bg-gradient-to-b from-gray-50/50 to-gray-100/50 dark:from-gray-900/50 dark:to-gray-800/50 custom-scrollbar md:p-4 md:space-y-4">
             {messages.length === 0 ? (
               <div className="text-center text-gray-500 dark:text-gray-400 mt-8">
-                <p>Start a conversation by typing a command below!</p>
-                <p className="text-sm mt-2">Try: "Add buy groceries" or "Show my todos"</p>
+                <p className="text-sm md:text-base">Start a conversation by typing a command below!</p>
+                <p className="text-xs mt-2 md:text-sm">Try: "Add buy groceries" or "Show my todos"</p>
               </div>
             ) : (
               messages.map((msg) => (
@@ -144,14 +144,14 @@ export default function ChatbotPage() {
                 >
                   <div
                     className={`
-                      max-w-xs md:max-w-md lg:max-w-lg xl:max-w-xl rounded-2xl px-4 py-3
+                      max-w-[85vw] md:max-w-xs lg:max-w-md xl:max-w-lg rounded-2xl px-3 py-2
                       ${msg.sender === 'user'
                         ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-br-none shadow-md'
                         : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-bl-none shadow-sm'}
                       ${msg.isLoading ? 'opacity-70' : ''}
                     `}
                   >
-                    <div className="text-sm whitespace-pre-wrap">{msg.content}</div>
+                    <div className="text-xs md:text-sm whitespace-pre-wrap">{msg.content}</div>
                     <div
                       className={`
                         text-xs mt-1 text-right
@@ -166,8 +166,8 @@ export default function ChatbotPage() {
             )}
             {isLoading && (
               <div className="flex justify-start animate-pulse">
-                <div className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-2xl px-4 py-3 rounded-bl-none max-w-xs">
-                  <div className="text-sm">Processing...</div>
+                <div className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-2xl px-3 py-2 rounded-bl-none max-w-xs">
+                  <div className="text-xs md:text-sm">Processing...</div>
                 </div>
               </div>
             )}
@@ -176,17 +176,17 @@ export default function ChatbotPage() {
           </div>
 
           {/* Input Area */}
-          <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800">
-            <div className="flex items-center space-x-2">
+          <div className="border-t border-gray-200 dark:border-gray-700 p-3 bg-white dark:bg-gray-800 md:p-4">
+            <div className="flex items-center space-x-1 md:space-x-2">
               <input
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Type your command (e.g. 'Add buy groceries', 'Show my todos', 'Complete meeting')"
+                placeholder="Ask me to manage your todos..."
                 disabled={isLoading}
                 className={`
-                  flex-1 border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500
+                  flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500
                   bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600
                   ${isLoading ? 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-500 cursor-not-allowed' : ''}
                 `}
@@ -195,47 +195,47 @@ export default function ChatbotPage() {
                 onClick={handleSendMessage}
                 disabled={isLoading || !inputValue.trim()}
                 className={`
-                  bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-lg font-medium
-                  flex items-center justify-center
+                  bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-lg font-medium
+                  flex items-center justify-center text-sm
                   ${(!inputValue.trim() || isLoading)
                     ? 'opacity-50 cursor-not-allowed'
                     : 'hover:from-indigo-700 hover:to-purple-700 active:from-indigo-800 active:to-purple-800 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200'}
                 `}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-5 md:w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
                 </svg>
               </button>
             </div>
 
-            <div className="mt-3 text-center text-xs text-gray-500 dark:text-gray-400">
-              <p>Examples: "Add buy groceries", "Show my todos", "Complete meeting", "Delete all tasks"</p>
+            <div className="mt-2 text-center text-xs text-gray-500 dark:text-gray-400">
+              <p>Examples: "Add groceries", "Show todos", "Complete meeting", "Delete tasks"</p>
             </div>
           </div>
         </div>
 
         {/* Quick Actions */}
-        <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="mt-4 grid grid-cols-2 gap-2 md:mt-6 md:grid-cols-4 md:gap-3">
           {[
-            { cmd: 'Add buy groceries', desc: 'Add a new todo' },
-            { cmd: 'Show my todos', desc: 'List all todos' },
-            { cmd: 'Complete meeting', desc: 'Mark as done' },
-            { cmd: 'Delete all tasks', desc: 'Remove all tasks' }
+            { cmd: 'Add groceries', desc: 'New todo' },
+            { cmd: 'Show todos', desc: 'List all' },
+            { cmd: 'Complete meeting', desc: 'Mark done' },
+            { cmd: 'Delete tasks', desc: 'Remove all' }
           ].map((action, index) => (
             <button
               key={index}
               onClick={() => setInputValue(action.cmd)}
-              className="bg-gradient-to-r from-blue-500/20 to-indigo-500/20 border border-blue-500/30 rounded-lg p-3 text-left hover:from-blue-500/30 hover:to-indigo-500/30 transition-all duration-200 hover:shadow-md"
+              className="bg-gradient-to-r from-blue-500/20 to-indigo-500/20 border border-blue-500/30 rounded-lg p-2 text-left hover:from-blue-500/30 hover:to-indigo-500/30 transition-all duration-200 hover:shadow-md text-xs"
             >
-              <div className="font-medium text-sm text-gray-800 dark:text-gray-200">{action.cmd}</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{action.desc}</div>
+              <div className="font-medium text-gray-800 dark:text-gray-200">{action.cmd}</div>
+              <div className="text-gray-500 dark:text-gray-400 mt-1">{action.desc}</div>
             </button>
           ))}
         </div>
       </div>
 
       {/* Footer */}
-      <div className="mt-12">
+      <div className="mt-8 md:mt-12">
         <Footer />
       </div>
     </div>
