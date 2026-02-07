@@ -6,10 +6,6 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import SQLModel
-from dotenv import load_dotenv
-
-# Load environment variables from .env file
-load_dotenv()
 
 # Import models to register them with SQLModel
 from src.models.user import User
@@ -26,7 +22,7 @@ app = FastAPI(
 )
 
 # Configure CORS for production
-allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001,https://your-frontend-domain.vercel.app")
+allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001,https://hackathon-2-phase-3-navy.vercel.app")
 allowed_origins = [origin.strip() for origin in allowed_origins_env.split(",")]
 
 # Add your frontend domain to allowed origins

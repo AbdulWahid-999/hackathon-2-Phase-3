@@ -8,10 +8,6 @@ from ..exceptions import UnauthorizedException
 import os
 import uuid
 from datetime import datetime, timedelta
-from dotenv import load_dotenv
-
-# Load environment variables from .env file
-load_dotenv()
 
 # Note: Do not use load_dotenv() in Vercel serverless functions
 # Environment variables are set directly in the Vercel dashboard

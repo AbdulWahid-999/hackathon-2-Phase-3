@@ -3,11 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from sqlmodel import SQLModel
 from .database.connection import engine
-from dotenv import load_dotenv
-
-# Load environment variables from .env file for local development
-# In production (Vercel), environment variables are set directly in the dashboard
-load_dotenv()
 
 # Note: Do not use load_dotenv() in Vercel serverless functions
 # Environment variables are set directly in the Vercel dashboard
