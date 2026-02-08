@@ -3,6 +3,7 @@ from typing import Optional
 from datetime import datetime
 import uuid
 
+
 class UserBase(SQLModel):
     email: str = Field(unique=True, nullable=False)
     is_active: bool = Field(default=True)
@@ -10,6 +11,7 @@ class UserBase(SQLModel):
     class Config:
         # Allow ORM mode to work with database objects
         from_attributes = True
+
 
 class User(UserBase, table=True):
     """
@@ -28,12 +30,15 @@ class User(UserBase, table=True):
         # Allow ORM mode to work with database objects
         from_attributes = True
 
-class UserCreate(UserBase):
+
+class UserCreate(SQLModel):
+    email: str = Field(unique=True, nullable=False)
     password: str = Field(min_length=1, max_length=72)
 
     class Config:
         # Allow ORM mode to work with database objects
         from_attributes = True
+
 
 class UserRead(UserBase):
     id: uuid.UUID
@@ -43,6 +48,7 @@ class UserRead(UserBase):
     class Config:
         # Allow ORM mode to work with database objects
         from_attributes = True
+
 
 class UserUpdate(SQLModel):
     email: Optional[str] = None

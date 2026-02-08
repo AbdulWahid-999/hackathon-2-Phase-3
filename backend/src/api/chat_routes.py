@@ -63,15 +63,6 @@ def send_chat_message(
                     detail="Invalid session ID format"
                 )
 
-        # Verify user exists and is active
-        user = session.get(User, current_user.id)
-        if not user or not user.is_active:
-            logger.warning(f"Unauthorized access attempt by user ID: {current_user.id}")
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="User not found or inactive"
-            )
-
         # Create chat service instance
         chat_service = ChatService(session)
 
@@ -232,3 +223,37 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str):
     except Exception as e:
         logger.error(f"WebSocket error for user {user_id}: {str(e)}")
         manager.disconnect(user_id)
+
+
+# Create a global instance of the connection manager
+connection_manager = ConnectionManager()
+
+
+@router.websocket("/ws/{user_id}")
+async def websocket_endpoint(websocket: WebSocket, user_id: str):
+    """
+    WebSocket endpoint for real-time updates.
+    Handles real-time communication between client and server.
+    """
+    logger.info(f"WebSocket connection attempt for user {user_id}")
+    await connection_manager.connect(websocket, user_id)
+    logger.info(f"WebSocket connected for user {user_id}")
+
+    try:
+        # Listen for messages from the client
+        while True:
+            data = await websocket.receive_text()
+            logger.debug(f"WebSocket received data from user {user_id}: {data}")
+
+            # Process received data (if needed)
+            # For now, just acknowledge receipt
+            await connection_manager.send_personal_message(
+                json.dumps({"type": "ack", "message": "received"}), 
+                user_id
+            )
+    except WebSocketDisconnect:
+        connection_manager.disconnect(user_id)
+        logger.info(f"WebSocket disconnected for user {user_id}")
+    except Exception as e:
+        logger.error(f"WebSocket error for user {user_id}: {str(e)}")
+        connection_manager.disconnect(user_id)
