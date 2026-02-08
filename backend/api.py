@@ -6,6 +6,11 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import SQLModel
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+# Note: In Vercel, environment variables are set in the dashboard, so load_dotenv() is safe to use
+load_dotenv()
 
 # Import models to register them with SQLModel
 from src.models.user import User

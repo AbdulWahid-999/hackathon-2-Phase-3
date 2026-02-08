@@ -7,7 +7,12 @@ from urllib.parse import urlparse
 # Environment variables are set directly in the Vercel dashboard
 
 # Get database URL from environment
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./todo_app.db")
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL or DATABASE_URL == "":
+    print("WARNING: DATABASE_URL not found in environment variables. Using SQLite as fallback.")
+    DATABASE_URL = "sqlite:///./todo_app.db"
+else:
+    print(f"Using database URL from environment: {DATABASE_URL}")
 
 # Debug: Print detailed information about the database URL (remove in production)
 print(f"DEBUG: DATABASE_URL environment variable = '{DATABASE_URL}'")
