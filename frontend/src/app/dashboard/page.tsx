@@ -8,6 +8,7 @@ import { TodoForm } from '@/components/TodoForm';
 import { Button } from '@/components/Button';
 import { useAuth } from '@/hooks/useAuth';
 import Footer from '@/components/Footer';
+import MobileChatNotification from '@/components/MobileChatNotification';
 
 export default function DashboardPage() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -367,6 +368,9 @@ export default function DashboardPage() {
       <div className="mt-8 md:mt-12">
         <Footer />
       </div>
+
+      {/* Mobile Chat Notification */}
+      <MobileChatNotification />
     </div>
   );
 }

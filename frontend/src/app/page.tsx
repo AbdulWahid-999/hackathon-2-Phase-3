@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/Button';
+import MobileChatNotification from '@/components/MobileChatNotification';
 
 export default function Home() {
   return (
@@ -127,6 +128,9 @@ export default function Home() {
           </div>
         </footer>
       </div>
+
+      {/* Mobile Chat Notification */}
+      <MobileChatNotification />
     </div>
   );
 }

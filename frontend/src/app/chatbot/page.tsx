@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { sendChatMessage } from '@/services/api';
 import Footer from '@/components/Footer';
+import MobileChatNotification from '@/components/MobileChatNotification';
 
 interface ChatMessage {
   id: string;
@@ -238,6 +239,9 @@ export default function ChatbotPage() {
       <div className="mt-8 md:mt-12">
         <Footer />
       </div>
+
+      {/* Mobile Chat Notification */}
+      <MobileChatNotification />
     </div>
   );
 }
