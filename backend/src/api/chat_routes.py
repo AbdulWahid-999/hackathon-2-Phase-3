@@ -6,9 +6,11 @@ from uuid import UUID
 from ..database.connection import get_session
 from ..middleware.auth import require_auth
 from ..models.user import User
+from ..models.chat_response import ChatMessageRequest, ChatMessageResponse, ChatHistoryResponse
 from ..services.chat_service import ChatService
 from pydantic import BaseModel
 import json
+import asyncio
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -89,6 +91,8 @@ def send_chat_message(
     except Exception as e:
         # Log the error for debugging
         print(f"Chat processing error: {e}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred while processing your message"
@@ -107,22 +111,25 @@ def get_chat_history(
     """
     try:
         # Create chat service instance
+        from ..services.chat_service import ChatService
+        
         chat_service = ChatService(session)
 
         # Get chat history
         history_records = chat_service.get_chat_history(current_user.id, limit)
 
-        # Convert to simple history format
+        # Convert to proper history format
         history = []
         for record in history_records:
-            history.append({
+            history_item = {
                 "id": str(record.id),
                 "user_input": record.input_text,
                 "bot_response": record.response_text,
                 "intent": record.intent_type,
                 "timestamp": record.timestamp.isoformat(),
                 "session_id": str(record.session_id) if record.session_id else None
-            })
+            }
+            history.append(history_item)
 
         return ChatHistoryResponse(history=history)
 
@@ -132,6 +139,8 @@ def get_chat_history(
     except Exception as e:
         # Log the error for debugging
         print(f"Chat history retrieval error: {e}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred while retrieving chat history"

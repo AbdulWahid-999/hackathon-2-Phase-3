@@ -36,10 +36,12 @@ app.add_middleware(
 # Import and include API routers
 from src.api.auth_routes import router as auth_router
 from src.api.todo_routes import router as todo_router
+from src.api.chat_routes import router as chat_router
 
 # Include API routers
 app.include_router(auth_router)
 app.include_router(todo_router)
+app.include_router(chat_router)
 
 @app.get("/")
 def read_root():
